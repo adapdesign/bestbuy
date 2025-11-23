@@ -35,7 +35,7 @@ fun ThumbnailBox(thumbnailImage: String?, itemName: String?) {
                 .crossfade(true)
                 .build(),
             contentDescription = itemName,
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.Fit,
             modifier = Modifier
                 .fillMaxHeight()
                 .size(120.dp)
@@ -44,6 +44,7 @@ fun ThumbnailBox(thumbnailImage: String?, itemName: String?) {
         )
     }
 }
+
 @Composable
 fun DescriptionBox(item: ProductItem) {
     Column(modifier = Modifier.padding(start = 8.dp)) {
@@ -68,6 +69,7 @@ fun ProductTitle(itemName: String?) {
         )
     }
 }
+
 @Composable
 fun ProductPrices(regularPrice: Double?, salePrice: Double?) {
     if (regularPrice != null) {

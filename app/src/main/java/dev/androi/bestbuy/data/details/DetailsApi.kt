@@ -8,5 +8,6 @@ interface DetailsApi {
     @GET("/api/v2/json/product/{id}")
     suspend fun getProductDetails(
         @Path("id") id: String = "",
-        @Query("lang") lang: String = "en") : ProductResponse
+        @Query("lang") lang: String = "en"
+    ): ProductResponse
 }

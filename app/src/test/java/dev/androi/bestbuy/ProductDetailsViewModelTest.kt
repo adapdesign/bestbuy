@@ -36,7 +36,14 @@ class ProductDetailsViewModelTest {
 
     @Test
     fun `test success case`() = runTest {
-        coEvery { repo.getDetails(any(), any()) } returns ProductResponse("", "", listOf(), "", 0.0, 0.0)
+        coEvery { repo.getDetails(any(), any()) } returns ProductResponse(
+            "",
+            "",
+            listOf(),
+            "",
+            0.0,
+            0.0
+        )
 
         vm.getDetails("test")
         advanceUntilIdle()

@@ -48,13 +48,15 @@ class SearchViewModelTest {
 
     @Test
     fun `test submitting success case`() = runTest {
-        val items = listOf(ProductItem(
-            sku = "123",
-            name = "Test Item",
-            thumbnailImage = "test.jpg",
-            regularPrice = 123.22,
-            salePrice = 103.11
-        ))
+        val items = listOf(
+            ProductItem(
+                sku = "123",
+                name = "Test Item",
+                thumbnailImage = "test.jpg",
+                regularPrice = 123.22,
+                salePrice = 103.11
+            )
+        )
         coEvery { repo.search("abc") } returns SearchResponse(products = items)
 
         vm.setQuery("abc")

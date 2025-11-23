@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,7 +23,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -80,8 +81,6 @@ fun ImageGalleryRow(
     }
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetailsScreen(vm: ProductDetailsViewModel, oBack: () -> Unit) {
     val uiState by vm.uiState.collectAsState()
@@ -94,50 +93,64 @@ fun ProductDetailsScreen(vm: ProductDetailsViewModel, oBack: () -> Unit) {
                 CircularProgressIndicator()
             }
         }
+
         is ProductUiState.Success -> {
             val results = (uiState as ProductUiState.Success).data
-            Column(modifier = Modifier.systemBarsPadding().fillMaxSize().verticalScroll(scrollState)) {
+            Column(modifier = Modifier
+                .systemBarsPadding()
+                .fillMaxSize()) {
                 Row {
                     IconButton(onClick = oBack) {
                         BackIcon()
                     }
-                    Text(results.name.toString(), fontSize = 20.sp)
                 }
-                // Subscribe the main image to gallery Index to know which image to show
-                if (results.additionalMedia.isNotEmpty() && results.additionalMedia.size >= galleryIndex) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(results.additionalMedia[galleryIndex].url)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = results.name,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .size(320.dp)
-                            .padding(16.dp)
-                            .clip(RoundedCornerShape(8.dp))
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(scrollState)
+                ) {
+                    Text(results.name.toString(), fontSize = 20.sp)
+                    // Subscribe the main image to gallery Index to know which image to show
+                    if (results.additionalMedia.isNotEmpty() && results.additionalMedia.size >= galleryIndex) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(results.additionalMedia[galleryIndex].url)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = results.name,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .size(320.dp)
+                                .padding(16.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                        )
+
+                        ImageGalleryRow(
+                            results.additionalMedia.mapNotNull { it.thumbnailUrl },
+                            modifier = Modifier.padding(6.dp)
+                        ) {
+                            vm.setGalleryIndex(it)
+                        }
+                    }
+                    Spacer(modifier = Modifier.padding(vertical = 8.dp))
+                    ProductPrices(results.regularPrice, results.salePrice)
+                    Spacer(modifier = Modifier.padding(vertical = 8.dp))
+                    Text(stringResource(R.string.description_title), fontSize = 13.sp)
+                    Text(
+                        results.shortDescription ?: "",
+                        modifier = Modifier.padding(bottom = 16.dp),
+                        fontSize = 14.sp
                     )
 
-                    ImageGalleryRow(
-                        results.additionalMedia.mapNotNull { it.thumbnailUrl },
-                        modifier = Modifier.padding(6.dp)
-                    ) {
-                        vm.setGalleryIndex(it)
-                    }
                 }
-                ProductPrices(results.regularPrice, results.salePrice)
-                Text(stringResource(R.string.description_title))
-                Text(
-                    results.shortDescription ?: "",
-                    modifier = Modifier.padding(bottom = 16.dp),
-                    fontSize = 14.sp
-                )
-                Button(onClick = {
-                    Toast.makeText(ctx, R.string.add_to_cart_message, Toast.LENGTH_SHORT).show()
-                }) {
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        Toast.makeText(ctx, R.string.add_to_cart_message, Toast.LENGTH_SHORT)
+                            .show()
+                    }) {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(stringResource(R.string.add_to_cart_cta))
@@ -145,6 +158,7 @@ fun ProductDetailsScreen(vm: ProductDetailsViewModel, oBack: () -> Unit) {
                 }
             }
         }
+
         else -> {
             // Possibly show different exceptions using exception return (E.g. Server Side errors, connectivity errors, etc.)
             val exception = (uiState as ProductUiState.Error).throwable

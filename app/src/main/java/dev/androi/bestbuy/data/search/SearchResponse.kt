@@ -4,7 +4,8 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class SearchResponse(
-    val products: List<ProductItem>? = emptyList())
+    val products: List<ProductItem>? = emptyList()
+)
 
 @JsonClass(generateAdapter = true)
 data class ProductItem(

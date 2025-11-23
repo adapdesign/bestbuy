@@ -22,10 +22,12 @@ import androidx.compose.ui.unit.dp
 import dev.androi.bestbuy.R
 
 @Composable
-fun SearchScreen(vm: SearchViewModel, onOpenProductDetails : (String?) -> Unit) {
+fun SearchScreen(vm: SearchViewModel, onOpenProductDetails: (String?) -> Unit) {
     val uiState by vm.uiState.collectAsState()
 
-    Column (modifier = Modifier.fillMaxWidth().systemBarsPadding()) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .systemBarsPadding()) {
         SearchBar(vm)
         when (uiState) {
             is SearchViewModel.SearchUiStates.Default -> {
@@ -35,11 +37,13 @@ fun SearchScreen(vm: SearchViewModel, onOpenProductDetails : (String?) -> Unit) 
                     )
                 }
             }
+
             is SearchViewModel.SearchUiStates.Loading -> {
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
             }
+
             is SearchViewModel.SearchUiStates.NoResults -> {
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Text(
@@ -47,15 +51,17 @@ fun SearchScreen(vm: SearchViewModel, onOpenProductDetails : (String?) -> Unit) 
                     )
                 }
             }
+
             is SearchViewModel.SearchUiStates.Success -> {
                 val results = (uiState as SearchViewModel.SearchUiStates.Success).data
                 LazyColumn {
                     items(results) { item ->
-                        Card(modifier = Modifier
-                            .padding(vertical = 6.dp)
-                            .clickable {
-                                onOpenProductDetails.invoke(item.sku)
-                            }) {
+                        Card(
+                            modifier = Modifier
+                                .padding(vertical = 6.dp)
+                                .clickable {
+                                    onOpenProductDetails.invoke(item.sku)
+                                }) {
                             Row(modifier = Modifier.fillMaxWidth()) {
                                 ThumbnailBox(
                                     thumbnailImage = item.thumbnailImage,
@@ -67,6 +73,7 @@ fun SearchScreen(vm: SearchViewModel, onOpenProductDetails : (String?) -> Unit) 
                     }
                 }
             }
+
             is SearchViewModel.SearchUiStates.Error -> {
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Text(text = stringResource(R.string.search_fetch_error))

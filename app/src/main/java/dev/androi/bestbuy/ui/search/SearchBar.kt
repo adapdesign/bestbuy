@@ -42,7 +42,7 @@ fun SearchBar(vm: SearchViewModel) {
             ),
             keyboardActions = KeyboardActions(
                 onSearch = { vm.submitSearch() },
-                onDone = { vm.submitSearch()  }
+                onDone = { vm.submitSearch() }
             ),
             singleLine = true,
             placeholder = { Text(ctx.getString(R.string.search_placeholder)) },

@@ -3,7 +3,7 @@ package dev.androi.bestbuy.data.details
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class ProductResponse (
+data class ProductResponse(
     val sku: String?,
     val name: String?,
     val additionalMedia: List<AdditionalMedia>,

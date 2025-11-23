@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
-class SearchViewModel (private val repo: SearchRepository) : ViewModel() {
+class SearchViewModel(private val repo: SearchRepository) : ViewModel() {
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query.asStateFlow()
 
@@ -22,6 +22,7 @@ class SearchViewModel (private val repo: SearchRepository) : ViewModel() {
     fun setQuery(q: String) {
         _query.value = q
     }
+
     private var searchJob: Job? = null
 
     fun submitSearch() {

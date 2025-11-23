@@ -46,10 +46,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 @Composable
 fun AppNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "search") {
-        composable("search") { backStackEntry->
+        composable("search") { backStackEntry ->
             val searchRepo: SearchRepository = SearchRepositoryImpl(RetrofitClient.searchApi)
             val vm: SearchViewModel = viewModel(
                 viewModelStoreOwner = backStackEntry,

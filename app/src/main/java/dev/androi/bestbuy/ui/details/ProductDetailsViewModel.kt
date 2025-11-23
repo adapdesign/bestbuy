@@ -21,7 +21,9 @@ class ProductDetailsViewModel(val repo: ProductDetailsRepository, id: String) : 
         _galleryIndex.value = index
     }
 
-    init { getDetails(id) }
+    init {
+        getDetails(id)
+    }
 
     fun getDetails(id: String) {
         viewModelScope.launch {
