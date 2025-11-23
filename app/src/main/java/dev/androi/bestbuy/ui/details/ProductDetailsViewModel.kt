@@ -4,11 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.androi.bestbuy.data.details.ProductDetailsRepository
 import dev.androi.bestbuy.data.details.ProductResponse
-import dev.androi.bestbuy.ui.utils.LanguageUtils
+import dev.androi.bestbuy.utils.LanguageUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import dev.androi.bestbuy.utils.ApiResult
 
 class ProductDetailsViewModel(val repo: ProductDetailsRepository, val id: String) : ViewModel() {
     private val _uiState = MutableStateFlow<ProductUiState>(ProductUiState.Loading)
@@ -28,11 +29,9 @@ class ProductDetailsViewModel(val repo: ProductDetailsRepository, val id: String
     fun getDetails() {
         viewModelScope.launch {
             _uiState.value = ProductUiState.Loading
-            try {
-                val response = repo.getDetails(id, LanguageUtils.getLanguageCode())
-                _uiState.value = ProductUiState.Success(response)
-            } catch (t: Throwable) {
-                _uiState.value = ProductUiState.Error(t)
+            when(val response = repo.getDetails(id, LanguageUtils.getLanguageCode())) {
+                is ApiResult.Success -> _uiState.value = ProductUiState.Success(response.data)
+                is ApiResult.Failure ->_uiState.value = ProductUiState.Error(response.throwable)
             }
         }
     }

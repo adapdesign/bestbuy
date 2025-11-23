@@ -1,4 +1,4 @@
-package dev.androi.bestbuy.ui.utils
+package dev.androi.bestbuy.utils
 
 import java.text.NumberFormat
 import java.util.Locale

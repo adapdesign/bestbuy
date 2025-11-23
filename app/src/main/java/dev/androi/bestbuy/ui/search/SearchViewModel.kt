@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.androi.bestbuy.data.search.ProductItem
 import dev.androi.bestbuy.data.search.SearchRepository
-import dev.androi.bestbuy.ui.utils.LanguageUtils
+import dev.androi.bestbuy.utils.LanguageUtils
+import dev.androi.bestbuy.utils.ApiResult
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,17 +34,22 @@ class SearchViewModel(private val repo: SearchRepository) : ViewModel() {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             _uiState.value = SearchUiStates.Loading
-            try {
-                val response = repo.search(q, LanguageUtils.getLanguageCode())
-                if (response.products.isNullOrEmpty()) {
-                    _uiState.value = SearchUiStates.NoResults
-                } else {
-                    _uiState.value = SearchUiStates.Success(response.products)
+            when (val response = repo.search(q, LanguageUtils.getLanguageCode())) {
+                is ApiResult.Success -> {
+                    if (response.data.products.isNullOrEmpty()) {
+                        _uiState.value = SearchUiStates.NoResults
+                    } else {
+                        _uiState.value = SearchUiStates.Success(response.data.products)
+                    }
                 }
-            } catch (_: CancellationException) {
-                // Ignore this case when job gets cancelled so it doesn't trigger error state
-            } catch (e: Exception) {
-                _uiState.value = SearchUiStates.Error(e)
+
+                is ApiResult.Failure -> {
+                    if (response.throwable is CancellationException) {
+                        // Ignore this case when job gets cancelled so it doesn't trigger error state
+                    } else {
+                        _uiState.value = SearchUiStates.Error(response.throwable)
+                    }
+                }
             }
         }
     }

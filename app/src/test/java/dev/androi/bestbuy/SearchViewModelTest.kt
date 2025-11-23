@@ -4,6 +4,8 @@ import dev.androi.bestbuy.data.search.ProductItem
 import dev.androi.bestbuy.data.search.SearchRepository
 import dev.androi.bestbuy.data.search.SearchResponse
 import dev.androi.bestbuy.ui.search.SearchViewModel
+import dev.androi.bestbuy.utils.failure
+import dev.androi.bestbuy.utils.success
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +39,7 @@ class SearchViewModelTest {
 
     @Test
     fun `test submitting empty results`() = runTest {
-        coEvery { repo.search("q") } returns SearchResponse(products = emptyList())
+        coEvery { repo.search("q") } returns success(SearchResponse(products = emptyList()))
 
         vm.setQuery("   ")
         vm.submitSearch()
@@ -57,7 +59,7 @@ class SearchViewModelTest {
                 salePrice = 103.11
             )
         )
-        coEvery { repo.search("abc") } returns SearchResponse(products = items)
+        coEvery { repo.search("abc") } returns success(SearchResponse(products = items))
 
         vm.setQuery("abc")
         vm.submitSearch()
@@ -69,7 +71,7 @@ class SearchViewModelTest {
 
     @Test
     fun `test submitting for empty or zero results`() = runTest {
-        coEvery { repo.search("q") } returns SearchResponse(products = emptyList())
+        coEvery { repo.search("q") } returns success(SearchResponse(products = emptyList()))
 
         vm.setQuery("q")
         vm.submitSearch()
@@ -81,7 +83,7 @@ class SearchViewModelTest {
     @Test
     fun `test submitting for error state`() = runTest {
         val ex = RuntimeException("fail")
-        coEvery { repo.search("q") } throws ex
+        coEvery { repo.search("q") } returns failure(ex)
 
         vm.setQuery("q")
         vm.submitSearch()

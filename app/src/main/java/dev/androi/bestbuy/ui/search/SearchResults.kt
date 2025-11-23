@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import dev.androi.bestbuy.data.search.ProductItem
-import dev.androi.bestbuy.ui.utils.formatCurrency
+import dev.androi.bestbuy.utils.formatCurrency
 
 @Composable
 fun ThumbnailBox(thumbnailImage: String?, itemName: String?) {

@@ -3,8 +3,9 @@ package dev.androi.bestbuy
 import dev.androi.bestbuy.data.details.ProductDetailsRepository
 import dev.androi.bestbuy.data.details.ProductResponse
 import dev.androi.bestbuy.ui.details.ProductDetailsViewModel
-import io.mockk.coEvery
-import io.mockk.mockk
+import dev.androi.bestbuy.utils.ApiResult
+import dev.androi.bestbuy.utils.failure
+import dev.androi.bestbuy.utils.success
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -25,8 +26,7 @@ class ProductDetailsViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        repo = mockk()
-        vm = ProductDetailsViewModel(repo, "id")
+
     }
 
     @After
@@ -36,16 +36,23 @@ class ProductDetailsViewModelTest {
 
     @Test
     fun `test success case`() = runTest {
-        coEvery { repo.getDetails(any(), any()) } returns ProductResponse(
-            "",
-            "",
-            listOf(),
-            "",
-            0.0,
-            0.0
-        )
-
-        vm.getDetails("test")
+        repo = object: ProductDetailsRepository {
+            override suspend fun getDetails(
+                id: String,
+                lang: String
+            ): ApiResult<ProductResponse> {
+                return success(ProductResponse(
+                    "",
+                    "",
+                    listOf(),
+                    "",
+                    0.0,
+                    0.0
+                ))
+            }
+        }
+        vm = ProductDetailsViewModel(repo, "id")
+        vm.getDetails()
         advanceUntilIdle()
         val state = vm.uiState.value
         assertTrue(state is ProductDetailsViewModel.ProductUiState.Success)
@@ -54,9 +61,17 @@ class ProductDetailsViewModelTest {
     @Test
     fun `test error case`() = runTest {
         val ex = RuntimeException("fail")
-        coEvery { repo.getDetails(any(), any()) } throws ex
+        repo = object: ProductDetailsRepository {
+            override suspend fun getDetails(
+                id: String,
+                lang: String
+            ): ApiResult<ProductResponse> {
+                return failure(ex)
+            }
+        }
+        vm = ProductDetailsViewModel(repo, "id")
 
-        vm.getDetails("test")
+        vm.getDetails()
         advanceUntilIdle()
         val state = vm.uiState.value
         assertTrue(state is ProductDetailsViewModel.ProductUiState.Error)
