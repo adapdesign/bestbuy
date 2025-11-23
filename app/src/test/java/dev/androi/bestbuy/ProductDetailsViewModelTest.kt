@@ -1,5 +1,6 @@
 package dev.androi.bestbuy
 
+import androidx.lifecycle.SavedStateHandle
 import dev.androi.bestbuy.data.details.ProductDetailsRepository
 import dev.androi.bestbuy.data.details.ProductResponse
 import dev.androi.bestbuy.ui.details.ProductDetailsViewModel
@@ -51,7 +52,8 @@ class ProductDetailsViewModelTest {
                 ))
             }
         }
-        vm = ProductDetailsViewModel(repo, "id")
+        val handle = SavedStateHandle(mapOf("id" to "id"))
+        vm = ProductDetailsViewModel(repo, handle)
         vm.getDetails()
         advanceUntilIdle()
         val state = vm.uiState.value
@@ -69,7 +71,8 @@ class ProductDetailsViewModelTest {
                 return failure(ex)
             }
         }
-        vm = ProductDetailsViewModel(repo, "id")
+        val handle = SavedStateHandle(mapOf("id" to "id"))
+        vm = ProductDetailsViewModel(repo, handle)
 
         vm.getDetails()
         advanceUntilIdle()
