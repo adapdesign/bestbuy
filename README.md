@@ -7,6 +7,7 @@
 - Repository Pattern
 - ViewModels
 - MVVM Pattern
+- Dagger/Hilt for Dependency Injection
 #### UI and Navigation
 - Jetpack Compose
 - Navigation
