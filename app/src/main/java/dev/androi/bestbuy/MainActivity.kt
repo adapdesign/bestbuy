@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -56,7 +58,14 @@ fun AppNavHost(navController: NavHostController) {
                 viewModelStoreOwner = backStackEntry,
                 factory = SearchViewModelFactory(searchRepo)
             )
-            SearchScreen(vm) {
+            val uiState by vm.uiState.collectAsState()
+            val query by vm.query.collectAsState()
+            SearchScreen(
+                uiState = uiState,
+                query = query,
+                setQuery = { q -> vm.setQuery(q) },
+                submitSearch = { vm.submitSearch() },
+            ) {
                 navController.navigate("detail/$it")
             }
         }
@@ -70,7 +79,12 @@ fun AppNavHost(navController: NavHostController) {
                 viewModelStoreOwner = backStackEntry,
                 factory = ProductDetailsViewModelFactory(productDetailsRepo, id)
             )
-            ProductDetailsScreen(productDetailsViewModel) {
+            val uiState by productDetailsViewModel.uiState.collectAsState()
+            val galleryIndex by productDetailsViewModel.galleryIndex.collectAsState()
+            ProductDetailsScreen(
+                uiState,
+                galleryIndex,
+                { productDetailsViewModel.setGalleryIndex(it) }) {
                 navController.popBackStack()
             }
         }

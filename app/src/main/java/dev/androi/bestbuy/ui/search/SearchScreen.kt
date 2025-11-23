@@ -13,8 +13,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -22,13 +20,19 @@ import androidx.compose.ui.unit.dp
 import dev.androi.bestbuy.R
 
 @Composable
-fun SearchScreen(vm: SearchViewModel, onOpenProductDetails: (String?) -> Unit) {
-    val uiState by vm.uiState.collectAsState()
-
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .systemBarsPadding()) {
-        SearchBar(vm)
+fun SearchScreen(
+    uiState: SearchViewModel.SearchUiStates,
+    query: String,
+    setQuery: (String) -> Unit,
+    submitSearch: () -> Unit,
+    onOpenProductDetails: (String?) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .systemBarsPadding()
+    ) {
+        SearchBar(query, setQuery, submitSearch)
         when (uiState) {
             is SearchViewModel.SearchUiStates.Default -> {
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -53,7 +57,7 @@ fun SearchScreen(vm: SearchViewModel, onOpenProductDetails: (String?) -> Unit) {
             }
 
             is SearchViewModel.SearchUiStates.Success -> {
-                val results = (uiState as SearchViewModel.SearchUiStates.Success).data
+                val results = uiState.data
                 LazyColumn {
                     items(results) { item ->
                         Card(

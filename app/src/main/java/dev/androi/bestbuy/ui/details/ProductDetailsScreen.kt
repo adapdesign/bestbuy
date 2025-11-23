@@ -27,15 +27,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -82,9 +79,12 @@ fun ImageGalleryRow(
 }
 
 @Composable
-fun ProductDetailsScreen(vm: ProductDetailsViewModel, oBack: () -> Unit) {
-    val uiState by vm.uiState.collectAsState()
-    val galleryIndex by vm.galleryIndex.collectAsState()
+fun ProductDetailsScreen(
+    uiState: ProductUiState,
+    galleryIndex: Int,
+    setGalleryIndex: (Int) -> Unit,
+    oBack: () -> Unit
+) {
     val scrollState = rememberScrollState()
     val ctx = LocalContext.current
     when (uiState) {
@@ -95,10 +95,12 @@ fun ProductDetailsScreen(vm: ProductDetailsViewModel, oBack: () -> Unit) {
         }
 
         is ProductUiState.Success -> {
-            val results = (uiState as ProductUiState.Success).data
-            Column(modifier = Modifier
-                .systemBarsPadding()
-                .fillMaxSize()) {
+            val results = uiState.data
+            Column(
+                modifier = Modifier
+                    .systemBarsPadding()
+                    .fillMaxSize()
+            ) {
                 Row {
                     IconButton(onClick = oBack) {
                         BackIcon()
@@ -130,7 +132,7 @@ fun ProductDetailsScreen(vm: ProductDetailsViewModel, oBack: () -> Unit) {
                             results.additionalMedia.mapNotNull { it.thumbnailUrl },
                             modifier = Modifier.padding(6.dp)
                         ) {
-                            vm.setGalleryIndex(it)
+                            setGalleryIndex(it)
                         }
                     }
                     Spacer(modifier = Modifier.padding(vertical = 8.dp))
