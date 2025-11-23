@@ -13,25 +13,21 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import dev.androi.bestbuy.data.details.ProductDetailsRepositoryImpl
-import dev.androi.bestbuy.data.RetrofitClient
-import dev.androi.bestbuy.data.search.SearchRepository
-import dev.androi.bestbuy.data.search.SearchRepositoryImpl
+import dagger.hilt.android.AndroidEntryPoint
 import dev.androi.bestbuy.ui.details.ProductDetailsViewModel
 import dev.androi.bestbuy.ui.search.SearchViewModel
 import dev.androi.bestbuy.ui.details.ProductDetailsScreen
-import dev.androi.bestbuy.ui.details.ProductDetailsViewModelFactory
 import dev.androi.bestbuy.ui.search.SearchScreen
-import dev.androi.bestbuy.ui.search.SearchViewModelFactory
 import dev.androi.bestbuy.ui.theme.BestBuyTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,11 +49,7 @@ class MainActivity : ComponentActivity() {
 fun AppNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "search") {
         composable("search") { backStackEntry ->
-            val searchRepo: SearchRepository = SearchRepositoryImpl(RetrofitClient.searchApi)
-            val vm: SearchViewModel = viewModel(
-                viewModelStoreOwner = backStackEntry,
-                factory = SearchViewModelFactory(searchRepo)
-            )
+            val vm: SearchViewModel = hiltViewModel(backStackEntry)
             val uiState by vm.uiState.collectAsState()
             val query by vm.query.collectAsState()
             SearchScreen(
@@ -73,12 +65,7 @@ fun AppNavHost(navController: NavHostController) {
             route = "detail/{id}",
             arguments = listOf(navArgument("id") { type = NavType.StringType })
         ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id")!!
-            val productDetailsRepo = ProductDetailsRepositoryImpl(RetrofitClient.productDetailsApi)
-            val productDetailsViewModel: ProductDetailsViewModel = viewModel(
-                viewModelStoreOwner = backStackEntry,
-                factory = ProductDetailsViewModelFactory(productDetailsRepo, id)
-            )
+            val productDetailsViewModel: ProductDetailsViewModel = hiltViewModel(backStackEntry)
             val uiState by productDetailsViewModel.uiState.collectAsState()
             val galleryIndex by productDetailsViewModel.galleryIndex.collectAsState()
             ProductDetailsScreen(

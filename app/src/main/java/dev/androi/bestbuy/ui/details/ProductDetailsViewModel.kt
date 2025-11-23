@@ -1,7 +1,9 @@
 package dev.androi.bestbuy.ui.details
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.androi.bestbuy.data.details.ProductDetailsRepository
 import dev.androi.bestbuy.data.details.ProductResponse
 import dev.androi.bestbuy.utils.LanguageUtils
@@ -10,8 +12,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import dev.androi.bestbuy.utils.ApiResult
+import javax.inject.Inject
 
-class ProductDetailsViewModel(val repo: ProductDetailsRepository, val id: String) : ViewModel() {
+@HiltViewModel
+class ProductDetailsViewModel  @Inject constructor(val repo: ProductDetailsRepository, savedStateHandle: SavedStateHandle) : ViewModel() {
+    private val id: String = checkNotNull(savedStateHandle.get<String>("id"))
     private val _uiState = MutableStateFlow<ProductUiState>(ProductUiState.Loading)
     val uiState: StateFlow<ProductUiState> = _uiState.asStateFlow()
 

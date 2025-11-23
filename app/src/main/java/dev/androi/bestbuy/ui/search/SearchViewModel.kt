@@ -2,6 +2,7 @@ package dev.androi.bestbuy.ui.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.androi.bestbuy.data.search.ProductItem
 import dev.androi.bestbuy.data.search.SearchRepository
 import dev.androi.bestbuy.utils.LanguageUtils
@@ -11,9 +12,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
-class SearchViewModel(private val repo: SearchRepository) : ViewModel() {
+@HiltViewModel
+class SearchViewModel @Inject constructor(private val repo: SearchRepository) : ViewModel() {
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query.asStateFlow()
 
