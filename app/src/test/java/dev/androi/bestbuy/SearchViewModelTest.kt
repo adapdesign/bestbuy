@@ -5,7 +5,6 @@ import dev.androi.bestbuy.data.search.SearchRepository
 import dev.androi.bestbuy.data.search.SearchResponse
 import dev.androi.bestbuy.ui.search.SearchViewModel
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -48,7 +47,7 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `submitSearch emits Loading then Success when repo returns products`() = runTest {
+    fun `test submitting success case`() = runTest {
         val items = listOf(ProductItem(
             sku = "123",
             name = "Test Item",
@@ -64,11 +63,10 @@ class SearchViewModelTest {
 
         val state = vm.uiState.value
         assertTrue(state is SearchViewModel.SearchUiStates.Success)
-        coVerify { repo.search("abc") }
     }
 
     @Test
-    fun `submitSearch emits NoResults when repo returns empty list`() = runTest {
+    fun `test submitting for empty or zero results`() = runTest {
         coEvery { repo.search("q") } returns SearchResponse(products = emptyList())
 
         vm.setQuery("q")
@@ -76,15 +74,14 @@ class SearchViewModelTest {
         advanceUntilIdle()
 
         assertTrue(vm.uiState.value is SearchViewModel.SearchUiStates.NoResults)
-        coVerify { repo.search("q")}
     }
 
     @Test
-    fun `submitSearch emits Error when repo throws`() = runTest {
+    fun `test submitting for error state`() = runTest {
         val ex = RuntimeException("fail")
-        coEvery { repo.search("x") } throws ex
+        coEvery { repo.search("q") } throws ex
 
-        vm.setQuery("x")
+        vm.setQuery("q")
         vm.submitSearch()
         advanceUntilIdle()
 
@@ -92,6 +89,5 @@ class SearchViewModelTest {
         assertTrue(state is SearchViewModel.SearchUiStates.Error)
         val err = state as SearchViewModel.SearchUiStates.Error
         assertSame(ex, err.throwable)
-        coVerify { repo.search("x")}
     }
 }

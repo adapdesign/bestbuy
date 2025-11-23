@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit
 object RetrofitClient {
 
     private const val USER_AGENT_KEY = "User-Agent"
+    // Server returns a network error unless certain user agents are provided, using my current browser as an example to get this to work:
     private const val USER_AGENT_OVERRIDE = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:145.0) Gecko/20100101 Firefox/145.0"
     private const val BASE_URL = "https://www.bestbuy.ca/"
 
@@ -31,6 +32,7 @@ object RetrofitClient {
 
     private val okHttp: OkHttpClient by lazy {
         OkHttpClient.Builder()
+            // Needed to increase readTimeout or sometimes API call gets dropped
             .readTimeout(60, TimeUnit.SECONDS)
             .addInterceptor(headerInterceptor)
             .build()

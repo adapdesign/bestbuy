@@ -5,13 +5,13 @@ import androidx.lifecycle.ViewModelProvider
 import dev.androi.bestbuy.data.details.ProductDetailsRepository
 
 class ProductDetailsViewModelFactory(
-    private val id: String,
-    private val repo: ProductDetailsRepository
+    private val repo: ProductDetailsRepository,
+    private val id: String
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ProductDetailsViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return ProductDetailsViewModel(id, repo) as T
+            return ProductDetailsViewModel(repo, id) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

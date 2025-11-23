@@ -18,18 +18,13 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import dev.androi.bestbuy.data.search.ProductItem
-import java.text.NumberFormat
-import java.util.Locale
-
-fun Double.formatCurrency(locale: Locale = Locale.getDefault()): String {
-    val formatter = NumberFormat.getCurrencyInstance(locale)
-    return formatter.format(this)
-}
+import dev.androi.bestbuy.ui.utils.formatCurrency
 
 @Composable
 fun ThumbnailBox(thumbnailImage: String?, itemName: String?) {
@@ -66,7 +61,10 @@ fun ProductTitle(itemName: String?) {
         Text(
             itemName,
             modifier = Modifier.padding(vertical = 8.dp),
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -79,12 +77,12 @@ fun ProductPrices(regularPrice: Double?, salePrice: Double?) {
                     pushStyle(SpanStyle(textDecoration = TextDecoration.LineThrough))
                     append(regularPrice.formatCurrency())
                     pop()
-                }, fontSize = 12.sp)
+                }, fontSize = 14.sp)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(salePrice.formatCurrency(), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(salePrice.formatCurrency(), fontWeight = FontWeight.Bold, fontSize = 16.sp)
             }
         } else {
-            Text(regularPrice.formatCurrency(), fontSize = 14.sp)
+            Text(regularPrice.formatCurrency(), fontSize = 16.sp)
         }
     }
 }

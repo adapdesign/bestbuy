@@ -3,6 +3,7 @@
     <string name="search_placeholder">Search Best Buy</string>
     <string name="add_to_cart_cta">Add to Cart</string>
     <string name="add_to_cart_message">Item has been added to cart!</string>
+    <string name="description_title">Description:</string>
     <string name="initial_search_results">Welcome, please enter a search term above and hit the search button!</string>
     <string name="zero_search_results">Sorry, we could not find any results.</string>
     <string name="search_fetch_error">There was an error trying to retrieve search results.</string>

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.androi.bestbuy.data.search.ProductItem
 import dev.androi.bestbuy.data.search.SearchRepository
+import dev.androi.bestbuy.ui.utils.LanguageUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +33,7 @@ class SearchViewModel (private val repo: SearchRepository) : ViewModel() {
         searchJob = viewModelScope.launch {
             _uiState.value = SearchUiStates.Loading
             try {
-                val response = repo.search(q)
+                val response = repo.search(q, LanguageUtils.getLanguageCode())
                 if (response.products.isNullOrEmpty()) {
                     _uiState.value = SearchUiStates.NoResults
                 } else {

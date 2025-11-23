@@ -9,10 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -36,19 +36,18 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             BestBuyTheme {
+                val navController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) {
                     Column(modifier = Modifier.padding(12.dp)) {
-                        NavHost()
+                        AppNavHost(navController)
                     }
                 }
             }
         }
     }
 }
-
 @Composable
-fun NavHost() {
-    val navController = rememberNavController()
+fun AppNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "search") {
         composable("search") { backStackEntry->
             val searchRepo: SearchRepository = SearchRepositoryImpl(RetrofitClient.searchApi)
@@ -68,11 +67,8 @@ fun NavHost() {
             val productDetailsRepo = ProductDetailsRepositoryImpl(RetrofitClient.productDetailsApi)
             val productDetailsViewModel: ProductDetailsViewModel = viewModel(
                 viewModelStoreOwner = backStackEntry,
-                factory = ProductDetailsViewModelFactory(id, productDetailsRepo)
+                factory = ProductDetailsViewModelFactory(productDetailsRepo, id)
             )
-            LaunchedEffect(id) {
-                productDetailsViewModel.getDetails(id)
-            }
             ProductDetailsScreen(productDetailsViewModel) {
                 navController.popBackStack()
             }
